@@ -747,6 +747,17 @@ def PPConfigFileParser(configfile, survey_name):
             "ERROR: SNR limit and magnitude limit are mutually exclusive. Please delete one or both from config file."
         )
 
+
+    try:
+        config_dict["ar_use_integrate"] = config.getboolean("EXPERT", "ar_use_integrate", fallback=False)
+    except ValueError:
+        pplogger.error(
+            "ERROR: could not parse value for ar_use_integrate as a boolean. Check formatting and try again."
+        )
+        sys.exit(
+            "ERROR: could not parse value for ar_use_integrate as a boolean. Check formatting and try again."
+        )
+
     try:
         config_dict["trailing_losses_on"] = config.getboolean("EXPERT", "trailing_losses_on", fallback=True)
     except ValueError:
