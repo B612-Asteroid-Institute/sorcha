@@ -747,7 +747,6 @@ def PPConfigFileParser(configfile, survey_name):
             "ERROR: SNR limit and magnitude limit are mutually exclusive. Please delete one or both from config file."
         )
 
-
     try:
         config_dict["ar_use_integrate"] = config.getboolean("EXPERT", "ar_use_integrate", fallback=False)
     except ValueError:
@@ -867,6 +866,11 @@ def PPPrintConfigsToLog(configs, cmd_args):
         "The apparent brightness is calculated using the following phase function model: "
         + configs["phase_function"]
     )
+
+    if configs["ar_use_integrate"]:
+        pplogger.info("Assist/rebound integration is ON. Integrate or interpolate will NOT be used.")
+    else:
+        pplogger.info("Assist/rebound integration is OFF. Integrate or interpolate will be used.")
 
     if configs["trailing_losses_on"]:
         pplogger.info("Computation of trailing losses is switched ON.")
