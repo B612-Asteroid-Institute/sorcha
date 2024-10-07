@@ -868,9 +868,9 @@ def PPPrintConfigsToLog(configs, cmd_args):
     )
 
     if configs["ar_use_integrate"]:
-        pplogger.info("Assist/rebound integration is ON. Integrate or interpolate will NOT be used.")
+        pplogger.info("ASSIST+REBOUND integration is ON. Integrate or interpolate will NOT be used.")
     else:
-        pplogger.info("Assist/rebound integration is OFF. Integrate or interpolate will be used.")
+        pplogger.info("ASSIST+REBOUND integration is OFF. Integrate or interpolate will be used.")
 
     if configs["trailing_losses_on"]:
         pplogger.info("Computation of trailing losses is switched ON.")
