@@ -163,9 +163,11 @@ def test_ephemeris_end2end(single_synthetic_pointing, tmp_path):
 
     assert len(observations_integrate) == 10
 
-    assert_almost_equal (observations_integrate["fieldMJD_TAI"].values, observations["fieldMJD_TAI"].values, decimal=6)
-    assert_almost_equal (observations_integrate["RA_deg"].values, observations["RA_deg"].values, decimal=6)
-    assert_almost_equal (observations_integrate["Dec_deg"].values, observations["Dec_deg"].values, decimal=6)
+    assert_almost_equal(
+        observations_integrate["fieldMJD_TAI"].values, observations["fieldMJD_TAI"].values, decimal=6
+    )
+    assert_almost_equal(observations_integrate["RA_deg"].values, observations["RA_deg"].values, decimal=6)
+    assert_almost_equal(observations_integrate["Dec_deg"].values, observations["Dec_deg"].values, decimal=6)
 
 
 def test_ephemeris_writeread_csv(single_synthetic_ephemeris, tmp_path):

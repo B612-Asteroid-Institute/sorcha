@@ -116,9 +116,15 @@ class PixelDict:
 
         self.pixel_dict = defaultdict(list)
 
-        self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm, use_integrate=use_integrate)
-        self.rho_hat_0_dict = self.get_all_object_unit_vectors(self.r_obs_0, self.t0, use_integrate=use_integrate)
-        self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp, use_integrate=use_integrate)
+        self.rho_hat_m_dict = self.get_all_object_unit_vectors(
+            self.r_obs_m, self.tm, use_integrate=use_integrate
+        )
+        self.rho_hat_0_dict = self.get_all_object_unit_vectors(
+            self.r_obs_0, self.t0, use_integrate=use_integrate
+        )
+        self.rho_hat_p_dict = self.get_all_object_unit_vectors(
+            self.r_obs_p, self.tp, use_integrate=use_integrate
+        )
 
         self.compute_pixel_traversed()
 
@@ -314,7 +320,9 @@ class PixelDict:
 
                     self.tm = self.t0 - self.picket_interval
                     self.r_obs_m = self.get_observatory_position(self.tm)
-                    self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm, use_integrate=use_integrate)
+                    self.rho_hat_m_dict = self.get_all_object_unit_vectors(
+                        self.r_obs_m, self.tm, use_integrate=use_integrate
+                    )
 
                 else:
                     # shift later
@@ -328,7 +336,9 @@ class PixelDict:
 
                     self.tp = self.t0 + self.picket_interval
                     self.r_obs_p = self.get_observatory_position(self.tp)
-                    self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp, use_integrate=use_integrate)
+                    self.rho_hat_p_dict = self.get_all_object_unit_vectors(
+                        self.r_obs_p, self.tp, use_integrate=use_integrate
+                    )
 
             else:
                 # Need to compute three new sets
@@ -337,15 +347,21 @@ class PixelDict:
                 # This is repeated code
                 self.t0 += n * self.picket_interval
                 self.r_obs_0 = self.get_observatory_position(self.t0)
-                self.rho_hat_0_dict = self.get_all_object_unit_vectors(self.r_obs_0, self.t0, use_integrate=use_integrate)
+                self.rho_hat_0_dict = self.get_all_object_unit_vectors(
+                    self.r_obs_0, self.t0, use_integrate=use_integrate
+                )
 
                 self.tp = self.t0 + self.picket_interval
                 self.r_obs_p = self.get_observatory_position(self.tp)
-                self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp, use_integrate=use_integrate)
+                self.rho_hat_p_dict = self.get_all_object_unit_vectors(
+                    self.r_obs_p, self.tp, use_integrate=use_integrate
+                )
 
                 self.tm = self.t0 - self.picket_interval
                 self.r_obs_m = self.get_observatory_position(self.tm)
-                self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm, use_integrate=use_integrate)
+                self.rho_hat_m_dict = self.get_all_object_unit_vectors(
+                    self.r_obs_m, self.tm, use_integrate=use_integrate
+                )
 
             self.compute_pixel_traversed()
         else:
