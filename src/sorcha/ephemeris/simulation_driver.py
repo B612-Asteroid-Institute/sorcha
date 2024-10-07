@@ -113,6 +113,10 @@ def create_ephemeris(orbits_df, pointings_df, args, configs):
     nside = 2 ** configs["ar_healpix_order"]
     n_sub_intervals = 101  # configs["n_sub_intervals"]
 
+    use_integrate = False
+    if configs["ar_use_integrate"]:
+        use_integrate = True
+
     ephemeris_csv_filename = None
     if args.output_ephemeris_file and args.outpath:
         ephemeris_csv_filename = os.path.join(args.outpath, args.output_ephemeris_file)
@@ -177,6 +181,7 @@ def create_ephemeris(orbits_df, pointings_df, args, configs):
         picket_interval,
         nside,
         n_sub_intervals=n_sub_intervals,
+        use_integrate=use_integrate,
     )
     for _, pointing in pointings_df.iterrows():
         mjd_tai = float(pointing["observationMidpointMJD_TAI"])
@@ -186,9 +191,15 @@ def create_ephemeris(orbits_df, pointings_df, args, configs):
         # compute a new set
 
         desigs = pixdict.get_designations(
-            pointing["fieldJD_TDB"], pointing["fieldRA_deg"], pointing["fieldDec_deg"], ang_fov
+            pointing["fieldJD_TDB"],
+            pointing["fieldRA_deg"],
+            pointing["fieldDec_deg"],
+            ang_fov,
+            use_integrate=use_integrate,
         )
-        unit_vectors = pixdict.interpolate_unit_vectors(desigs, pointing["fieldJD_TDB"])
+        unit_vectors = pixdict.interpolate_unit_vectors(
+            desigs, pointing["fieldJD_TDB"], use_integrate=use_integrate
+        )
         visit_vector = get_vec(pointing, "visit_vector")
         r_obs = get_vec(pointing, "r_obs")
 
@@ -208,7 +219,14 @@ def create_ephemeris(orbits_df, pointings_df, args, configs):
                     _,
                     ephem_geom_params.r_ast,
                     ephem_geom_params.v_ast,
-                ) = integrate_light_time(sim, ex, pointing["fieldJD_TDB"] - ephem.jd_ref, r_obs, lt0=0.01)
+                ) = integrate_light_time(
+                    sim,
+                    ex,
+                    pointing["fieldJD_TDB"] - ephem.jd_ref,
+                    r_obs,
+                    lt0=0.01,
+                    use_integrate=use_integrate,
+                )
                 ephem_geom_params.rho_hat = ephem_geom_params.rho / ephem_geom_params.rho_mag
 
                 ang_from_center = 180 / np.pi * np.arccos(np.dot(ephem_geom_params.rho_hat, visit_vector))
