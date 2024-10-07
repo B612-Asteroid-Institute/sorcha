@@ -62,6 +62,7 @@ class PixelDict:
         nside=128,
         nested=True,
         n_sub_intervals=101,
+        use_integrate=False,
     ):
         """
         Initialization function for the class. Computes the initial positions required for the ephemerides interpolation
@@ -115,9 +116,9 @@ class PixelDict:
 
         self.pixel_dict = defaultdict(list)
 
-        self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm)
-        self.rho_hat_0_dict = self.get_all_object_unit_vectors(self.r_obs_0, self.t0)
-        self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp)
+        self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm, use_integrate=use_integrate)
+        self.rho_hat_0_dict = self.get_all_object_unit_vectors(self.r_obs_0, self.t0, use_integrate=use_integrate)
+        self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp, use_integrate=use_integrate)
 
         self.compute_pixel_traversed()
 
@@ -138,7 +139,7 @@ class PixelDict:
         r_obs = self.observatory.barycentricObservatory(et, self.obsCode) / AU_KM
         return r_obs
 
-    def get_object_unit_vectors(self, desigs, r_obs, t, lt0=0.01):
+    def get_object_unit_vectors(self, desigs, r_obs, t, lt0=0.01, use_integrate=False):
         """
         Computes the unit vector (in the equatorial sphere) that point towards the object - observatory vector
         for a list of objects, at a given time
@@ -165,13 +166,13 @@ class PixelDict:
 
             # Get the topocentric unit vectors
             rho, rho_mag, lt, r_ast, v_ast = integrate_light_time(
-                sim, ex, t - self.ephem.jd_ref, r_obs, lt0=lt0
+                sim, ex, t - self.ephem.jd_ref, r_obs, lt0=lt0, use_integrate=use_integrate
             )
             rho_hat = rho / rho_mag
             rho_hat_dict[k] = rho_hat
         return rho_hat_dict
 
-    def get_all_object_unit_vectors(self, r_obs, t, lt0=0.01):
+    def get_all_object_unit_vectors(self, r_obs, t, lt0=0.01, use_integrate=False):
         """
         Computes the unit vector (in the equatorial sphere) that point towards the object - observatory vector
         for *all* objects, at a given time
@@ -191,7 +192,7 @@ class PixelDict:
         """
 
         desigs = self.sim_dict.keys()
-        return self.get_object_unit_vectors(desigs, r_obs, t, lt0=lt0)
+        return self.get_object_unit_vectors(desigs, r_obs, t, lt0=lt0, use_integrate=use_integrate)
 
     def get_interp_factors(self, tm, t0, tp, n_sub_intervals):
         """
@@ -223,7 +224,7 @@ class PixelDict:
         Lp = Lp[:, np.newaxis]
         return Lm, L0, Lp
 
-    def interpolate_unit_vectors(self, desigs, jd_tdb):
+    def interpolate_unit_vectors(self, desigs, jd_tdb, use_integrate=False):
         """
         Interpolates the unit vectors for a list of designations towards the new target time
 
@@ -241,7 +242,7 @@ class PixelDict:
         # Update the table of unit vectors if needed.
         # Should not normally need to, if this routine is being
         # called properly
-        self.update_pickets(jd_tdb)
+        self.update_pickets(jd_tdb, use_integrate=use_integrate)
 
         Lm, L0, Lp = lagrange3(self.tm, self.t0, self.tp, jd_tdb)
 
@@ -287,7 +288,7 @@ class PixelDict:
             for pix in pixels:
                 self.pixel_dict[pix].append(k)
 
-    def update_pickets(self, jd_tdb):
+    def update_pickets(self, jd_tdb, use_integrate=False):
         """
         Updates the picket interpolation vectors for the new reference time
 
@@ -313,7 +314,7 @@ class PixelDict:
 
                     self.tm = self.t0 - self.picket_interval
                     self.r_obs_m = self.get_observatory_position(self.tm)
-                    self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm)
+                    self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm, use_integrate=use_integrate)
 
                 else:
                     # shift later
@@ -327,7 +328,7 @@ class PixelDict:
 
                     self.tp = self.t0 + self.picket_interval
                     self.r_obs_p = self.get_observatory_position(self.tp)
-                    self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp)
+                    self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp, use_integrate=use_integrate)
 
             else:
                 # Need to compute three new sets
@@ -336,21 +337,21 @@ class PixelDict:
                 # This is repeated code
                 self.t0 += n * self.picket_interval
                 self.r_obs_0 = self.get_observatory_position(self.t0)
-                self.rho_hat_0_dict = self.get_all_object_unit_vectors(self.r_obs_0, self.t0)
+                self.rho_hat_0_dict = self.get_all_object_unit_vectors(self.r_obs_0, self.t0, use_integrate=use_integrate)
 
                 self.tp = self.t0 + self.picket_interval
                 self.r_obs_p = self.get_observatory_position(self.tp)
-                self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp)
+                self.rho_hat_p_dict = self.get_all_object_unit_vectors(self.r_obs_p, self.tp, use_integrate=use_integrate)
 
                 self.tm = self.t0 - self.picket_interval
                 self.r_obs_m = self.get_observatory_position(self.tm)
-                self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm)
+                self.rho_hat_m_dict = self.get_all_object_unit_vectors(self.r_obs_m, self.tm, use_integrate=use_integrate)
 
             self.compute_pixel_traversed()
         else:
             pass
 
-    def get_designations(self, jd_tdb, ra, dec, ang_fov):
+    def get_designations(self, jd_tdb, ra, dec, ang_fov, use_integrate=False):
         """
         Get the object designations that are within an angular radius of a topocentric unit vector at a
         given time.
@@ -371,7 +372,7 @@ class PixelDict:
             List of designations
         """
         # Update the table of unit vectors if needed.
-        self.update_pickets(jd_tdb)
+        self.update_pickets(jd_tdb, use_integrate=use_integrate)
 
         pixels = get_hp_neighbors(ra, dec, ang_fov, nside=self.nside, nested=self.nested)
 

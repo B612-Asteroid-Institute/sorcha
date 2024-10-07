@@ -181,6 +181,7 @@ def create_ephemeris(orbits_df, pointings_df, args, configs):
         picket_interval,
         nside,
         n_sub_intervals=n_sub_intervals,
+        use_integrate=use_integrate
     )
     for _, pointing in pointings_df.iterrows():
         mjd_tai = float(pointing["observationMidpointMJD_TAI"])
@@ -190,9 +191,9 @@ def create_ephemeris(orbits_df, pointings_df, args, configs):
         # compute a new set
 
         desigs = pixdict.get_designations(
-            pointing["fieldJD_TDB"], pointing["fieldRA_deg"], pointing["fieldDec_deg"], ang_fov
+            pointing["fieldJD_TDB"], pointing["fieldRA_deg"], pointing["fieldDec_deg"], ang_fov, use_integrate=use_integrate
         )
-        unit_vectors = pixdict.interpolate_unit_vectors(desigs, pointing["fieldJD_TDB"])
+        unit_vectors = pixdict.interpolate_unit_vectors(desigs, pointing["fieldJD_TDB"], use_integrate=use_integrate)
         visit_vector = get_vec(pointing, "visit_vector")
         r_obs = get_vec(pointing, "r_obs")
 
