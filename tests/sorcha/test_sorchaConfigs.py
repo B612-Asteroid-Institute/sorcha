@@ -1,23 +1,24 @@
 import pytest
-from sorcha.utilities.sorchaArguments import sorchaArguments
-from sorcha.utilities.dataUtilitiesForTests import get_demo_filepath
-from sorcha.lightcurves.lightcurve_registration import LC_METHODS
+
 from sorcha.activity.activity_registration import CA_METHODS
+from sorcha.lightcurves.lightcurve_registration import LC_METHODS
+from sorcha.utilities.dataUtilitiesForTests import get_demo_filepath
+from sorcha.utilities.sorchaArguments import sorchaArguments
 from sorcha.utilities.sorchaConfigs import (
-    sorchaConfigs,
-    inputConfigs,
-    simulationConfigs,
-    filtersConfigs,
-    saturationConfigs,
-    phasecurvesConfigs,
-    fovConfigs,
+    activityConfigs,
+    auxiliaryConfigs,
+    expertConfigs,
     fadingfunctionConfigs,
+    filtersConfigs,
+    fovConfigs,
+    inputConfigs,
+    lightcurveConfigs,
     linkingfilterConfigs,
     outputConfigs,
-    lightcurveConfigs,
-    activityConfigs,
-    expertConfigs,
-    auxiliaryConfigs,
+    phasecurvesConfigs,
+    saturationConfigs,
+    simulationConfigs,
+    sorchaConfigs,
 )
 
 # these are the results we expect from sorcha_config_demo.ini
@@ -105,6 +106,11 @@ correct_expert = {
     "randomization_on": True,
     "vignetting_on": True,
     "brute_force": True,
+    "ar_use_integrate": False,
+    "ar_initial_dt": 10,
+    "ar_min_dt": 0,
+    "ar_epsilon": 1e-9,
+    "ar_adaptive_mode": 1,
 }
 
 correct_auxciliary_URLs = {
@@ -610,7 +616,6 @@ def test_fadingfunctionConfig_on_float(key_name):
     )
 
 
-
 @pytest.mark.parametrize("key_name", ["fading_function_width", "fading_function_peak_efficiency"])
 def test_fadingfunction_outofbounds(key_name):
     """
@@ -634,6 +639,7 @@ def test_fadingfunction_outofbounds(key_name):
             == "ERROR: fading_function_peak_efficiency out of bounds. Must be between 0 and 1."
         )
 
+
 def test_fadingfunction_allnone():
     """
     This loops through the not required keys and makes sure the code fails correctly when all attributes are none
@@ -645,8 +651,11 @@ def test_fadingfunction_allnone():
     with pytest.raises(SystemExit) as error_text:
         test_configs = fadingfunctionConfigs(**fadingfunction_configs)
     assert (
-        error_text.value.code == "ERROR: Both fading_function_peak_efficiency and fading_function_width are needed to be supplied for fading function"
+        error_text.value.code
+        == "ERROR: Both fading_function_peak_efficiency and fading_function_width are needed to be supplied for fading function"
     )
+
+
 ##################################################################################################################################
 
 # linkingfilter tests
@@ -1032,11 +1041,12 @@ def test_auxiliary_config_making_url_none(file):
 
 
 def test_PrintConfigsToLog(tmp_path):
-    from sorcha.modules.PPGetLogger import PPGetLogger
-    from sorcha.utilities.sorchaConfigs import PrintConfigsToLog
-    from sorcha.utilities.dataUtilitiesForTests import get_test_filepath
-    import os
     import glob
+    import os
+
+    from sorcha.modules.PPGetLogger import PPGetLogger
+    from sorcha.utilities.dataUtilitiesForTests import get_test_filepath
+    from sorcha.utilities.sorchaConfigs import PrintConfigsToLog
 
     test_path = os.path.dirname(get_test_filepath("test_input_fullobs.csv"))
     config_file_location = get_test_filepath("test_PPConfig.ini")
