@@ -11,8 +11,11 @@ from sorcha.ephemeris.pixel_dict import PixelDict
 from sorcha.ephemeris.simulation_constants import *
 from sorcha.ephemeris.simulation_geometry import *
 from sorcha.ephemeris.simulation_parsing import *
-from sorcha.ephemeris.simulation_setup import create_assist_ephemeris, furnish_spiceypy, generate_simulations
-from sorcha.modules.PPOutput import PPOutWriteCSV, PPOutWriteHDF5, PPOutWriteSqlite3
+from sorcha.ephemeris.simulation_setup import (create_assist_ephemeris,
+                                               furnish_spiceypy,
+                                               generate_simulations)
+from sorcha.modules.PPOutput import (PPOutWriteCSV, PPOutWriteHDF5,
+                                     PPOutWriteSqlite3)
 from sorcha.utilities.dataUtilitiesForTests import get_data_out_filepath
 
 
@@ -118,7 +121,7 @@ def create_ephemeris(orbits_df, pointings_df, args, sconfigs):
     verboselog("Furnishing SPICE kernels.")
     furnish_spiceypy(args, sconfigs.auxiliary)
     verboselog("Generating ASSIST+REBOUND simulations.")
-    sim_dict = generate_simulations(ephem, gm_sun, gm_total, orbits_df, args)
+    sim_dict = generate_simulations(ephem, gm_sun, gm_total, orbits_df, args, sconfigs)
     pixel_dict = defaultdict(list)
     observatories = Observatory(args, sconfigs.auxiliary)
 
