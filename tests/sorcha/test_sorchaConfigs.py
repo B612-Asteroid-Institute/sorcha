@@ -4,15 +4,22 @@ from sorcha.activity.activity_registration import CA_METHODS
 from sorcha.lightcurves.lightcurve_registration import LC_METHODS
 from sorcha.utilities.dataUtilitiesForTests import get_demo_filepath
 from sorcha.utilities.sorchaArguments import sorchaArguments
-from sorcha.utilities.sorchaConfigs import (activityConfigs, auxiliaryConfigs,
-                                            expertConfigs,
-                                            fadingfunctionConfigs,
-                                            filtersConfigs, fovConfigs,
-                                            inputConfigs, lightcurveConfigs,
-                                            linkingfilterConfigs,
-                                            outputConfigs, phasecurvesConfigs,
-                                            saturationConfigs,
-                                            simulationConfigs, sorchaConfigs)
+from sorcha.utilities.sorchaConfigs import (
+    activityConfigs,
+    auxiliaryConfigs,
+    expertConfigs,
+    fadingfunctionConfigs,
+    filtersConfigs,
+    fovConfigs,
+    inputConfigs,
+    lightcurveConfigs,
+    linkingfilterConfigs,
+    outputConfigs,
+    phasecurvesConfigs,
+    saturationConfigs,
+    simulationConfigs,
+    sorchaConfigs,
+)
 
 # these are the results we expect from sorcha_config_demo.ini
 correct_inputs = {
@@ -609,7 +616,6 @@ def test_fadingfunctionConfig_on_float(key_name):
     )
 
 
-
 @pytest.mark.parametrize("key_name", ["fading_function_width", "fading_function_peak_efficiency"])
 def test_fadingfunction_outofbounds(key_name):
     """
@@ -633,6 +639,7 @@ def test_fadingfunction_outofbounds(key_name):
             == "ERROR: fading_function_peak_efficiency out of bounds. Must be between 0 and 1."
         )
 
+
 def test_fadingfunction_allnone():
     """
     This loops through the not required keys and makes sure the code fails correctly when all attributes are none
@@ -644,8 +651,11 @@ def test_fadingfunction_allnone():
     with pytest.raises(SystemExit) as error_text:
         test_configs = fadingfunctionConfigs(**fadingfunction_configs)
     assert (
-        error_text.value.code == "ERROR: Both fading_function_peak_efficiency and fading_function_width are needed to be supplied for fading function"
+        error_text.value.code
+        == "ERROR: Both fading_function_peak_efficiency and fading_function_width are needed to be supplied for fading function"
     )
+
+
 ##################################################################################################################################
 
 # linkingfilter tests

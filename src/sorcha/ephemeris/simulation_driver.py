@@ -11,11 +11,8 @@ from sorcha.ephemeris.pixel_dict import PixelDict
 from sorcha.ephemeris.simulation_constants import *
 from sorcha.ephemeris.simulation_geometry import *
 from sorcha.ephemeris.simulation_parsing import *
-from sorcha.ephemeris.simulation_setup import (create_assist_ephemeris,
-                                               furnish_spiceypy,
-                                               generate_simulations)
-from sorcha.modules.PPOutput import (PPOutWriteCSV, PPOutWriteHDF5,
-                                     PPOutWriteSqlite3)
+from sorcha.ephemeris.simulation_setup import create_assist_ephemeris, furnish_spiceypy, generate_simulations
+from sorcha.modules.PPOutput import PPOutWriteCSV, PPOutWriteHDF5, PPOutWriteSqlite3
 from sorcha.utilities.dataUtilitiesForTests import get_data_out_filepath
 
 
