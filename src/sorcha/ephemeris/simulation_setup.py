@@ -12,7 +12,8 @@ from assist import Ephem
 
 from sorcha.ephemeris.simulation_constants import *
 from sorcha.ephemeris.simulation_data_files import make_retriever
-from sorcha.ephemeris.simulation_geometry import barycentricObservatoryRates, get_hp_neighbors, ra_dec2vec
+from sorcha.ephemeris.simulation_geometry import (barycentricObservatoryRates,
+                                                  get_hp_neighbors, ra_dec2vec)
 from sorcha.ephemeris.simulation_parsing import Observatory, mjd_tai_to_epoch
 from sorcha.utilities.generate_meta_kernel import build_meta_kernel_file
 
@@ -139,6 +140,12 @@ def generate_simulations(ephem, gm_sun, gm_total, orbits_df, args, sconfigs):
         sim.t = epoch - ephem.jd_ref
 
         # Read in expert configs for the integrator
+        args.pplogger.debug(
+            f"ASSIST initial dt: {sconfigs.expert.ar_initial_dt}\n"
+            f"min_dt: {sconfigs.expert.ar_min_dt}\n"
+            f"epsilon: {sconfigs.expert.ar_epsilon}\n"
+            f"adaptive_mode: {sconfigs.expert.ar_adaptive_mode}"
+        )
         sim.dt = sconfigs.expert.ar_initial_dt
         sim.ri_ias15.adaptive_mode = sconfigs.expert.ar_adaptive_mode
         sim.ri_ias15.epsilon = sconfigs.expert.ar_epsilon
