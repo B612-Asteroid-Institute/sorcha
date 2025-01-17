@@ -100,6 +100,10 @@ correct_expert = {
     "vignetting_on": True,
     "brute_force": True,
     "ar_use_integrate": False,
+    "ar_initial_dt": 10,
+    "ar_min_dt": 0,
+    "ar_epsilon": 1e-9,
+    "ar_adaptive_mode": 1,
 }
 
 correct_auxciliary_URLs = {

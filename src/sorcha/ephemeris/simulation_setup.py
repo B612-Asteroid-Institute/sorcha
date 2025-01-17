@@ -12,7 +12,8 @@ from assist import Ephem
 
 from sorcha.ephemeris.simulation_constants import *
 from sorcha.ephemeris.simulation_data_files import make_retriever
-from sorcha.ephemeris.simulation_geometry import barycentricObservatoryRates, get_hp_neighbors, ra_dec2vec
+from sorcha.ephemeris.simulation_geometry import (barycentricObservatoryRates,
+                                                  get_hp_neighbors, ra_dec2vec)
 from sorcha.ephemeris.simulation_parsing import Observatory, mjd_tai_to_epoch
 from sorcha.utilities.generate_meta_kernel import build_meta_kernel_file
 
@@ -85,7 +86,7 @@ def furnish_spiceypy(args, auxconfigs):
     spice.furnsh(meta_kernel)
 
 
-def generate_simulations(ephem, gm_sun, gm_total, orbits_df, args):
+def generate_simulations(ephem, gm_sun, gm_total, orbits_df, args, sconfigs):
     """
     Creates the dictionary of ASSIST simulations for the ephemeris generation
 
@@ -101,6 +102,8 @@ def generate_simulations(ephem, gm_sun, gm_total, orbits_df, args):
         Pandas dataframe with the input orbits
     args : dictionary or `sorchaArguments` object
         dictionary of command-line arguments.
+    sconfigs: dataclass
+        Dataclass of configuration file arguments.
 
     Returns
     ---------
@@ -135,9 +138,14 @@ def generate_simulations(ephem, gm_sun, gm_total, orbits_df, args):
         # The time step is just a guess to start with.
         sim = rebound.Simulation()
         sim.t = epoch - ephem.jd_ref
-        sim.dt = 10
-        # This turns off the iterative timestep introduced in arXiv:2401.02849 and default since rebound 4.0.3
-        sim.ri_ias15.adaptive_mode = 1
+
+
+        # Read in expert configs for the integrator
+        sim.dt = sconfigs.expert.ar_initial_dt
+        sim.ri_ias15.adaptive_mode = sconfigs.expert.ar_adaptive_mode
+        sim.ri_ias15.epsilon = sconfigs.expert.ar_epsilon
+        sim.ri_ias15.min_dt = sconfigs.expert.ar_min_dt
+
         # Add the particle to the simulation
         sim.add(ic)
 

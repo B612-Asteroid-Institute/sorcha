@@ -738,7 +738,19 @@ class expertConfigs:
     """brute-force ephemeris generation on all objects without running a first-pass"""
 
     ar_use_integrate: bool = None
-    """flag for using the integrate method instead of integrate_or_interpolate"""
+    """flag for using the ASSIST integrate method instead of integrate_or_interpolate"""
+
+    ar_initial_dt: float = 10
+    """initial time step for the ASSIST+REBOUND integrator"""
+
+    ar_min_dt: float = 0
+    """minimum time step for the ASSIST+REBOUND integrator"""
+
+    ar_epsilon: float = 1e-9
+    """tolerance for the ASSIST+REBOUND integrator"""
+
+    ar_adaptive_mode: int = 1
+    """adaptive mode for the ASSIST+REBOUND integrator"""
 
     def __post_init__(self):
         """Automagically validates the expert configs after initialisation."""
@@ -790,6 +802,10 @@ class expertConfigs:
         self.vignetting_on = cast_as_bool_or_set_default(self.vignetting_on, "vignetting_on", True)
         self.brute_force = cast_as_bool_or_set_default(self.brute_force, "brute_force", True)
         self.ar_use_integrate = cast_as_bool_or_set_default(self.ar_use_integrate, "ar_use_integrate", False)
+        self.ar_epsilon = cast_as_float(self.ar_epsilon, "ar_epsilon")
+        self.ar_initial_dt = cast_as_float(self.ar_initial_dt, "ar_initial_dt")
+        self.ar_min_dt = cast_as_float(self.ar_min_dt, "ar_min_dt")
+        self.ar_adaptive_mode = cast_as_int(self.ar_adaptive_mode, "ar_adaptive_mode")
 
 
 @dataclass
