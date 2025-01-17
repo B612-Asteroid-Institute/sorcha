@@ -5,8 +5,7 @@ import pandas as pd
 import pytest
 from numpy.testing import assert_almost_equal
 
-from sorcha.ephemeris.simulation_driver import (create_ephemeris,
-                                                write_out_ephemeris_file)
+from sorcha.ephemeris.simulation_driver import create_ephemeris, write_out_ephemeris_file
 from sorcha.ephemeris.simulation_setup import precompute_pointing_information
 from sorcha.modules.PPGetLogger import PPGetLogger
 from sorcha.modules.PPReadPointingDatabase import PPReadPointingDatabase
@@ -14,8 +13,7 @@ from sorcha.readers.CombinedDataReader import CombinedDataReader
 from sorcha.readers.CSVReader import CSVDataReader
 from sorcha.readers.EphemerisReader import EphemerisDataReader
 from sorcha.readers.OrbitAuxReader import OrbitAuxReader
-from sorcha.utilities.dataUtilitiesForTests import (get_demo_filepath,
-                                                    get_test_filepath)
+from sorcha.utilities.dataUtilitiesForTests import get_demo_filepath, get_test_filepath
 from sorcha.utilities.sorchaArguments import sorchaArguments
 from sorcha.utilities.sorchaConfigs import inputConfigs, sorchaConfigs
 from sorcha.utilities.sorchaGetLogger import sorchaGetLogger
