@@ -1,21 +1,21 @@
 import numpy as np
 import pandas as pd
-from sorcha.utilities.dataUtilitiesForTests import get_test_filepath, get_demo_filepath
-from sorcha.utilities.sorchaGetLogger import sorchaGetLogger
-from sorcha.utilities.sorchaArguments import sorchaArguments
-from sorcha.modules.PPReadPointingDatabase import PPReadPointingDatabase
-from sorcha.ephemeris.simulation_setup import (
-    precompute_pointing_information,
-    create_assist_ephemeris,
-    generate_simulations,
-    furnish_spiceypy,
-)
 
 from sorcha.ephemeris.pixel_dict import PixelDict
+from sorcha.ephemeris.simulation_constants import AU_KM, SPEED_OF_LIGHT
+from sorcha.ephemeris.simulation_geometry import (ecliptic_to_equatorial,
+                                                  vec2ra_dec)
 from sorcha.ephemeris.simulation_parsing import Observatory
-from sorcha.ephemeris.simulation_geometry import ecliptic_to_equatorial, vec2ra_dec
-from sorcha.ephemeris.simulation_constants import SPEED_OF_LIGHT, AU_KM
+from sorcha.ephemeris.simulation_setup import (create_assist_ephemeris,
+                                               furnish_spiceypy,
+                                               generate_simulations,
+                                               precompute_pointing_information)
+from sorcha.modules.PPReadPointingDatabase import PPReadPointingDatabase
+from sorcha.utilities.dataUtilitiesForTests import (get_demo_filepath,
+                                                    get_test_filepath)
+from sorcha.utilities.sorchaArguments import sorchaArguments
 from sorcha.utilities.sorchaConfigs import sorchaConfigs
+from sorcha.utilities.sorchaGetLogger import sorchaGetLogger
 
 
 def test_pixeldict(tmp_path):
@@ -86,7 +86,7 @@ def test_pixeldict(tmp_path):
     ephem, gm_sun, gm_total = create_assist_ephemeris(args, configs.auxiliary)
     furnish_spiceypy(args, configs.auxiliary)
 
-    sim_dict = generate_simulations(ephem, gm_sun, gm_total, orbits_df, args)
+    sim_dict = generate_simulations(ephem, gm_sun, gm_total, orbits_df, args, configs)
     observatory = Observatory(
         auxconfigs=configs.auxiliary, args=None, oc_file=get_test_filepath("ObsCodes_test.json")
     )
