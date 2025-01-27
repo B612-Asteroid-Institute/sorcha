@@ -188,13 +188,16 @@ def precompute_pointing_information(pointings_df, args, sconfigs):
     pointings_df : pandas dataframe
         The original dataframe with several additional columns of precomputed values.
     """
+    pplogger = logging.getLogger(__name__)
+    pplogger.info("Initializing assist")
     ephem, _, _ = create_assist_ephemeris(args, sconfigs.auxiliary)
-
+    pplogger.info("Furnishing SPICE")
     furnish_spiceypy(args, sconfigs.auxiliary)
     obsCode = sconfigs.simulation.ar_obs_code
     observatories = Observatory(args, sconfigs.auxiliary)
 
     # vectorize the calculation to get x,y,z vector from ra/dec
+    pplogger.info("Calculating visit vectors")
     vectors = ra_dec2vec(
         pointings_df["fieldRA_deg"].astype("float"), pointings_df["fieldDec_deg"].astype("float")
     )
@@ -203,11 +206,15 @@ def precompute_pointing_information(pointings_df, args, sconfigs):
     pointings_df["visit_vector_z"] = vectors[:, 2]
 
     # use pandas `apply` (even though it's slow) instead of looping over the df in a for loop
+    pplogger.info("Converting to JD TBD")
     pointings_df["fieldJD_TDB"] = pointings_df["observationMidpointMJD_TAI"].apply(mjd_tai_to_epoch)
 
+    pplogger.info("Calculating time offsets")
     et = (pointings_df["fieldJD_TDB"] - spice.j2000()) * 24 * 60 * 60
 
+
     # create a partial function since most params don't change, and it makes the lambda easier to read
+    pplogger.info("Calculating HP neighbors partial")
     partial_get_hp_neighbors = partial(
         get_hp_neighbors,
         search_radius=sconfigs.simulation.ar_ang_fov + sconfigs.simulation.ar_fov_buffer,
@@ -219,6 +226,7 @@ def precompute_pointing_information(pointings_df, args, sconfigs):
     r_obs = np.empty((len(pointings_df), 3))
     v_obs = np.empty((len(pointings_df), 3))
 
+    pplogger.info("Calculating observatory rates")
     for idx, et_i in enumerate(et):
         r_obs[idx], v_obs[idx] = barycentricObservatoryRates(et_i, obsCode, observatories=observatories)
 
@@ -232,6 +240,7 @@ def precompute_pointing_information(pointings_df, args, sconfigs):
     pointings_df["v_obs_y"] = v_obs[:, 1]
     pointings_df["v_obs_z"] = v_obs[:, 2]
 
+    pplogger.info("Calculating sun position and velocity")
     # create empty arrays for sun position and velocity to be filled in
     r_sun = np.empty((len(pointings_df), 3))
     v_sun = np.empty((len(pointings_df), 3))
@@ -248,5 +257,8 @@ def precompute_pointing_information(pointings_df, args, sconfigs):
     pointings_df["v_sun_y"] = v_sun[:, 1]
     pointings_df["v_sun_z"] = v_sun[:, 2]
 
+    pplogger.info("Clearing SPICE")
     spice.kclear()
+    pplogger.info("Done")
     return pointings_df
+
