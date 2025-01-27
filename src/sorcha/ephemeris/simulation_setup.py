@@ -40,7 +40,10 @@ def create_assist_ephemeris(args, auxconfigs) -> tuple:
     retriever = make_retriever(auxconfigs, args.ar_data_file_path)
     planets_file_path = retriever.fetch(auxconfigs.jpl_planets)
     small_bodies_file_path = retriever.fetch(auxconfigs.jpl_small_bodies)
+    pplogger.info(f"Planets file path: {planets_file_path}")
+    pplogger.info(f"Small bodies file path: {small_bodies_file_path}")
     ephem = Ephem(planets_path=planets_file_path, asteroids_path=small_bodies_file_path)
+    pplogger.info("ASSIST ephemeris object created")
     gm_sun = ephem.get_particle("Sun", 0).m
     gm_total = sum(sorted([ephem.get_particle(i, 0).m for i in range(27)]))
 
