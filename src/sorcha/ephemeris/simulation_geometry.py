@@ -84,6 +84,7 @@ def integrate_light_time(
     lt = lt0
 
     for i in range(iter):
+        print(f"lt: {lt}")
         if use_integrate:
             sim.integrate(t - lt)
         else:
