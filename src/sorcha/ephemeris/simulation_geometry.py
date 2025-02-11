@@ -80,6 +80,7 @@ def integrate_light_time(sim, ex, t, r_obs, lt0=0, iter=3, speed_of_light=SPEED_
     """
     lt = lt0
     for i in range(iter):
+        print(f"lt: {lt}")
         ex.integrate_or_interpolate(t - lt)
         target = np.array(sim.particles[0].xyz)
         vtarget = np.array(sim.particles[0].vxyz)
