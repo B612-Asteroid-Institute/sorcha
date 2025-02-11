@@ -84,7 +84,7 @@ def integrate_light_time(
     lt = lt0
 
     for i in range(iter):
-        print(f"lt: {lt}")
+
         if use_integrate:
             sim.integrate(t - lt)
         else:
@@ -94,6 +94,10 @@ def integrate_light_time(
         rho = target - r_obs
         rho_mag = np.linalg.norm(rho)
         lt = rho_mag / speed_of_light
+        print(f"target: {target}")
+        print(f"vtarget: {vtarget}")
+        print(f"lt: {lt}")
+        print(f"rho_mag: {rho_mag}")
     # Compute a second value to get rates (need v_obs)
     return rho, rho_mag, lt, target, vtarget
 
