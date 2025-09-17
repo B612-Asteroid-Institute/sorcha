@@ -143,8 +143,8 @@ class filtersConfigs:
     """other filters given alongside main filter"""
 
     def __post_init__(self):
-        """Automagically validates the filters configs after initialisation."""
-        self._validate_filters_configs()
+       """Automagically validates the filters configs after initialisation."""
+       self._validate_filters_configs()
 
     def _validate_filters_configs(self):
         """
@@ -162,7 +162,7 @@ class filtersConfigs:
         check_key_exists(self.observing_filters, "observing_filters")
         check_key_exists(self.survey_name, "survey_name")
         self.observing_filters = [e.strip() for e in self.observing_filters.split(",")]
-        self._check_for_correct_filters()
+        #self._check_for_correct_filters()
 
     def _check_for_correct_filters(self):
         """
@@ -226,12 +226,14 @@ class saturationConfigs:
         None
         """
         check_key_exists(self._observing_filters, "_observing_filters")
+        logging.info(f"self._observing_filters: {self._observing_filters}")
         if self.bright_limit is not None:
             self.bright_limit_on = True
 
         if self.bright_limit_on:
             try:
                 self.bright_limit = [float(e.strip()) for e in self.bright_limit.split(",")]
+                logging.info(f"self.bright_limit: {self.bright_limit}")
             except ValueError:
                 logging.error("ERROR: could not parse brightness limits. Check formatting and try again.")
                 sys.exit("ERROR: could not parse brightness limits. Check formatting and try again.")

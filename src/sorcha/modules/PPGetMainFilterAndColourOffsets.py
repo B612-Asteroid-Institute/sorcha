@@ -68,6 +68,7 @@ def PPGetMainFilterAndColourOffsets(filename, observing_filters, filesep):
 
     if len(observing_filters) > 1:
         colour_offsets = [x + "-" + mainfilter for x in observing_filters[1:]]
+        logging.info(f"colour_offsets: {colour_offsets}")
     elif len(observing_filters) == 1:
         colour_offsets = None
     else:
